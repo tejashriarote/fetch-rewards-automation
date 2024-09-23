@@ -14,8 +14,8 @@ This is a Spring Boot web application built with Maven. This README provides ins
 First, clone the repository to your local machine:
 
 
-git clone https://github.com/yourusername/your-repo-name.git<br>
-cd your-repo-name
+git clone https://github.com/tejashriarote/fetch-rewards-automation.git<br>
+cd fetch-rewards-automation
 
 To build the project, navigate to the project directory and run:<br>
 mvn spring-boot:run
