@@ -1,8 +1,5 @@
 package com.weather.springboot.controller;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weather.springboot.OpenWeatherServicesApplication;
@@ -17,11 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = OpenWeatherServicesApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,142 +41,140 @@ public class WeatherServiceControllerTest {
 
     @Test
     public void testGetWeatherByLocation() {
-        // Prepare the URL with query parameters
         String url = UriComponentsBuilder.fromUriString("/weather/location")
-                .queryParam("city", "Charlotte")
-                .queryParam("state", "NC")
-                .queryParam("countryCode", "US")
+                .queryParam("locations", "Charlotte/NC/US")
                 .toUriString();
 
-        // Perform the GET request
-        ResponseEntity<Root[]> response = restTemplate.getForEntity(url, Root[].class);
+        ResponseEntity<List<Root>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Root>>() {
+                }
+        );
 
-        // Assert the response status and body
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        // Add additional assertions for response content if needed
     }
 
     @Test
     public void testGetWeatherByZipcodeValid() {
-        // Prepare the URL with a valid ZIP code
+
         String url = UriComponentsBuilder.fromUriString("/weather/zipCode")
-                .queryParam("zipCode", "28262")
-                .queryParam("countryCode", "US")
+                .queryParam("zipCodes", "28262")
                 .toUriString();
 
-        // Perform the GET request
-        ResponseEntity<Zip> response = restTemplate.getForEntity(url, Zip.class);
 
-        // Assert the response status and body
+        ResponseEntity<List<Zip>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Zip>>() {
+                }
+        );
+
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        // Add additional assertions for response content if needed
+
     }
 
     @Test
     public void testGetWeatherByZipcodeInvalid() {
-        // Prepare the URL with an invalid ZIP code
+
         String url = UriComponentsBuilder.fromUriString("/weather/zipCode")
-                .queryParam("zipCode", "1") // Assuming this is an invalid ZIP code
+                .queryParam("zipCodes", "1") // Assuming this is an invalid ZIP code
                 .toUriString();
 
-        // Perform the GET request
-        ResponseEntity<Zip> response = restTemplate.getForEntity(url, Zip.class);
 
-        // Assert the response status
+        ResponseEntity<List<Zip>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Zip>>() {
+                }
+        );
+
+
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        // Add additional assertions if needed
+
     }
 
     @Test
     public void testGetWeatherByZipcodeNotFound() {
         String url = UriComponentsBuilder.fromUriString("/weather/zipCode")
-                .queryParam("zipCode", "99999") // Assuming this is an invalid ZIP code
+                .queryParam("zipCodes", "99999") // Assuming this is an invalid ZIP code
                 .toUriString();
 
-        ResponseEntity<Zip> response = restTemplate.getForEntity(url, Zip.class);
+        ResponseEntity<List<Zip>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Zip>>() {
+                }
+        );
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        // Additional assertions can be added here
+
     }
 
 
     @Test
     public void testRetrieveWeatherLocation() throws JSONException, JsonProcessingException {
-        // Build request entity
+
         HttpEntity<String> entity = new HttpEntity<>(null);
 
-        // Perform the API request
+
         ResponseEntity<Root[]> response = restTemplate.exchange(
-                createURLWithPort("/weather/location?city=Charlotte&state=NC&countryCode=US"),
+                createURLWithPort("/weather/location?locations=Charlotte/NC/US"),
                 HttpMethod.GET, entity, Root[].class);
 
-        // Convert response to JSON
+
         String jsonString = convertObjectToJson(response.getBody());
 
-        // Read expected JSON from file
+
         String expectedJson = readExpectedJsonFromFile("./json/weather/location/expectedWeatherCharlotteResponse.json");
 
-        // Assert the expected and actual JSONs
+
         JSONAssert.assertEquals(expectedJson, jsonString, true);
     }
+
     @Test
     public void testRetrieveWeatherLocationWithoutStateAndCountry() throws JSONException, JsonProcessingException {
-        // Build request entity
+
         HttpEntity<String> entity = new HttpEntity<>(null);
 
-        // Perform the API request
+
         ResponseEntity<Root[]> response = restTemplate.exchange(
-                createURLWithPort("/weather/location?city=Charlotte&countryCode=US"),
+                createURLWithPort("/weather/location?locations=Charlotte/US"),
                 HttpMethod.GET, entity, Root[].class);
 
-        // Convert response to JSON
+
         String jsonString = convertObjectToJson(response.getBody());
 
-        // Read expected JSON from file
+
         String expectedJson = readExpectedJsonFromFile("./json/weather/location/expectedWeatherForCharlotteWithoutState.json");
 
-        // Assert the expected and actual JSONs
+
         JSONAssert.assertEquals(expectedJson, jsonString, true);
     }
+
     @Test
     public void testRetrieveWeatherInvalidLocation() throws JSONException, JsonProcessingException {
-        // Build request entity
+
         HttpEntity<String> entity = new HttpEntity<>(null);
 
-        // Perform the API request with an invalid location
+
         ResponseEntity<Root[]> response = restTemplate.exchange(
-                createURLWithPort("/weather/location?city=InvalidCity&state=XX&countryCode=ZZ"),
+                createURLWithPort("/weather/location?locations=InvalidCity/XX/ZZ"),
                 HttpMethod.GET, entity, Root[].class);
 
-        // Convert response to JSON
+
         String jsonString = convertObjectToJson(response.getBody());
 
-        // Read expected JSON from file (an empty array in this case)
-        //String expectedJson = readExpectedJsonFromFile("./json/weather/location/expectedWeatherInvalidLocationResponse.json");
-        String expectedJson="[]";
-        // Assert the expected and actual JSONs (empty array expected)
-        JSONAssert.assertEquals(expectedJson, jsonString, true);
-    }
 
-    @Test
-    public void testRetrieveWeatherOnlyStateAndCountry() throws JSONException, JsonProcessingException {
-        // Build request entity
-        HttpEntity<String> entity = new HttpEntity<>(null);
+        String expectedJson = "[]";
 
-        // Perform the API request with an invalid location
-        ResponseEntity<Root[]> response = restTemplate.exchange(
-                createURLWithPort("/weather/location?state=XX&countryCode=ZZ"),
-                HttpMethod.GET, entity, Root[].class);
-
-        // Convert response to JSON
-        String jsonString = convertObjectToJson(response.getBody());
-
-        // Read expected JSON from file (an empty array in this case)
-        //String expectedJson = readExpectedJsonFromFile("./json/weather/location/expectedWeatherInvalidLocationResponse.json");
-        String expectedJson="[]";
-        // Assert the expected and actual JSONs (empty array expected)
         JSONAssert.assertEquals(expectedJson, jsonString, true);
     }
 

@@ -35,30 +35,29 @@ public class WeatherService {
     }
 
     public Zip getWeatherByZipcode(String zipLocation) {
-        //String url = buildUriWithParams(apiUrlByZipcode, "zip", zipLocation);
 
         String url = buildUriWithParams(apiUrlByZipcode, "zip", zipLocation);
         try {
             ResponseEntity<Zip> response = getResponse(url, Zip.class);
 
-            // If the response is successful, return the body
+
             return response.getBody();
         } catch (HttpClientErrorException e) {
-            // Handle 400 Bad Request specifically for invalid ZIP codes
+
             if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 throw new WeatherServiceException("Invalid ZIP code provided", HttpStatus.BAD_REQUEST);
             }
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new WeatherServiceException("Zip Code Not Found", HttpStatus.NOT_FOUND);
             }
-            // Handle other HTTP errors accordingly
+
             throw new WeatherServiceException("Error fetching weather data", e.getStatusCode());
         }
 
-        //return getResponse(url, Zip.class);
+
     }
 
-    // Helper method to build the URI with parameters, using your StringBuilder approach
+
     private String buildUriWithParams(String baseUrl, String... queryParams) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl);
         StringBuilder locationBuilder = new StringBuilder();
@@ -74,8 +73,7 @@ public class WeatherService {
 
         return builder.toUriString();
     }
-
-    // Helper method to execute the REST API call and return the response body
+    
     private <T> ResponseEntity<T> getResponse(String url, Class<T> responseType) {
         ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
         return response;

@@ -2,51 +2,17 @@
   {
     "name": "Charlotte",
     "local_names": {
-      "ar": "شارلت",
-      "fa": "شارلوت",
-      "ur": "شارلٹ",
       "mk": "Шарлот",
+      "ar": "شارلت",
       "ru": "Шарлотт",
+      "uk": "Шарлотт",
       "en": "Charlotte",
-      "uk": "Шарлотт"
+      "fa": "شارلوت",
+      "ur": "شارلٹ"
     },
     "lat": 35.2272086,
     "lon": -80.8430827,
     "country": "US",
     "state": "North Carolina"
-  },
-  {
-    "name": "Charlotte",
-    "local_names": null,
-    "lat": 28.8612025,
-    "lon": -98.7068057,
-    "country": "US",
-    "state": "Texas"
-  },
-  {
-    "name": "Charlotte",
-    "local_names": null,
-    "lat": 41.9604757,
-    "lon": -90.4688634,
-    "country": "US",
-    "state": "Iowa"
-  },
-  {
-    "name": "Charlotte",
-    "local_names": null,
-    "lat": 42.5637369,
-    "lon": -84.8355792,
-    "country": "US",
-    "state": "Michigan"
-  },
-  {
-    "name": "Town of Charlotte",
-    "local_names": {
-      "en": "Town of Charlotte"
-    },
-    "lat": 42.3009717,
-    "lon": -79.2318941,
-    "country": "US",
-    "state": "New York"
   }
 ]
