@@ -1,0 +1,7 @@
+com\weather\springboot\model\Root.class
+com\weather\springboot\model\Zip.class
+com\weather\springboot\model\Location.class
+com\weather\springboot\service\WeatherService.class
+com\weather\springboot\service\WeatherServiceException.class
+com\weather\springboot\controller\WeatherController.class
+com\weather\springboot\OpenWeatherServicesApplication.class

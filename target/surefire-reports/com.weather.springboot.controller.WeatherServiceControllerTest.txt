@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.weather.springboot.controller.WeatherServiceControllerTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.403 s - in com.weather.springboot.controller.WeatherServiceControllerTest
